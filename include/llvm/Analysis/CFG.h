@@ -64,9 +64,13 @@ bool isCriticalEdge(const TerminatorInst *TI, unsigned SuccNum,
 /// we find a block that dominates the block containing 'To'. DT is most useful
 /// on branchy code but not loops, and LI is most useful on code with loops but
 /// does not help on branchy code outside loops.
+///
+/// In order to avoid long compilation times, the function only searches
+/// a limited number of blocks. This can be avoided by unsetting WithLimit.
 bool isPotentiallyReachable(const Instruction *From, const Instruction *To,
                             const DominatorTree *DT = nullptr,
-                            const LoopInfo *LI = nullptr);
+                            const LoopInfo *LI = nullptr,
+                            bool WithLimit = true);
 
 /// \brief Determine whether block 'To' is reachable from 'From', returning
 /// true if uncertain.
@@ -76,7 +80,8 @@ bool isPotentiallyReachable(const Instruction *From, const Instruction *To,
 /// 'To' can not be executed. Conservatively returns true.
 bool isPotentiallyReachable(const BasicBlock *From, const BasicBlock *To,
                             const DominatorTree *DT = nullptr,
-                            const LoopInfo *LI = nullptr);
+                            const LoopInfo *LI = nullptr,
+                            bool WithLimit = true);
 
 /// \brief Determine whether there is at least one path from a block in
 /// 'Worklist' to 'StopBB', returning true if uncertain.
@@ -88,7 +93,8 @@ bool isPotentiallyReachable(const BasicBlock *From, const BasicBlock *To,
 bool isPotentiallyReachableFromMany(SmallVectorImpl<BasicBlock *> &Worklist,
                                     BasicBlock *StopBB,
                                     const DominatorTree *DT = nullptr,
-                                    const LoopInfo *LI = nullptr);
+                                    const LoopInfo *LI = nullptr,
+                                    bool WithLimit = true);
 } // End llvm namespace
 
 #endif

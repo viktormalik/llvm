@@ -129,7 +129,7 @@ static bool loopContainsBoth(const LoopInfo *LI,
 
 bool llvm::isPotentiallyReachableFromMany(
     SmallVectorImpl<BasicBlock *> &Worklist, BasicBlock *StopBB,
-    const DominatorTree *DT, const LoopInfo *LI) {
+    const DominatorTree *DT, const LoopInfo *LI, bool WithLimit) {
   // When the stop block is unreachable, it's dominated from everywhere,
   // regardless of whether there's a path between the two blocks.
   if (DT && !DT->isReachableFromEntry(StopBB))
@@ -150,7 +150,7 @@ bool llvm::isPotentiallyReachableFromMany(
     if (LI && loopContainsBoth(LI, BB, StopBB))
       return true;
 
-    if (!--Limit) {
+    if (WithLimit && !--Limit) {
       // We haven't been able to prove it one way or the other. Conservatively
       // answer true -- that there is potentially a path.
       return true;
@@ -172,7 +172,8 @@ bool llvm::isPotentiallyReachableFromMany(
 }
 
 bool llvm::isPotentiallyReachable(const BasicBlock *A, const BasicBlock *B,
-                                  const DominatorTree *DT, const LoopInfo *LI) {
+                                  const DominatorTree *DT, const LoopInfo *LI,
+                                  bool WithLimit) {
   assert(A->getParent() == B->getParent() &&
          "This analysis is function-local!");
 
@@ -180,11 +181,12 @@ bool llvm::isPotentiallyReachable(const BasicBlock *A, const BasicBlock *B,
   Worklist.push_back(const_cast<BasicBlock*>(A));
 
   return isPotentiallyReachableFromMany(Worklist, const_cast<BasicBlock *>(B),
-                                        DT, LI);
+                                        DT, LI, WithLimit);
 }
 
 bool llvm::isPotentiallyReachable(const Instruction *A, const Instruction *B,
-                                  const DominatorTree *DT, const LoopInfo *LI) {
+                                  const DominatorTree *DT, const LoopInfo *LI,
+                                  bool WithLimit) {
   assert(A->getParent()->getParent() == B->getParent()->getParent() &&
          "This analysis is function-local!");
 
@@ -232,5 +234,5 @@ bool llvm::isPotentiallyReachable(const Instruction *A, const Instruction *B,
     return false;
 
   return isPotentiallyReachableFromMany(
-      Worklist, const_cast<BasicBlock *>(B->getParent()), DT, LI);
+      Worklist, const_cast<BasicBlock *>(B->getParent()), DT, LI, WithLimit);
 }
