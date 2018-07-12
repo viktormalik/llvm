@@ -1782,6 +1782,10 @@ LLVMValueRef LLVMGetNamedGlobalAlias(LLVMModuleRef M,
   return wrap(unwrap(M)->getNamedAlias(Name));
 }
 
+void LLVMDeleteGlobalAlias(LLVMValueRef Alias) {
+    unwrap<GlobalAlias>(Alias)->eraseFromParent();
+}
+
 /*--.. Operations on functions .............................................--*/
 
 LLVMValueRef LLVMAddFunction(LLVMModuleRef M, const char *Name,

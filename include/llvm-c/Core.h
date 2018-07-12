@@ -1902,6 +1902,11 @@ LLVMValueRef LLVMGetNamedGlobalAlias(LLVMModuleRef M,
                                      const char *Name, size_t NameLen);
 
 /**
+ * Delete alias from its module.
+ */
+void LLVMDeleteGlobalAlias(LLVMValueRef Alias);
+
+/**
  * @}
  */
 
