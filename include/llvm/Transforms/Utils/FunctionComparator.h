@@ -82,7 +82,7 @@ public:
       : FnL(F1), FnR(F2), GlobalNumbers(GN) {}
 
   /// Test whether the two functions have equivalent behaviour.
-  int compare();
+  virtual int compare();
   /// Hash a function. Equivalent functions will have the same hash, and unequal
   /// functions will have different hashes with high probability.
   typedef uint64_t FunctionHash;
@@ -96,10 +96,10 @@ protected:
   }
 
   /// Compares the signature and other general attributes of the two functions.
-  int compareSignature() const;
+  virtual int compareSignature() const;
 
   /// Test whether two basic blocks have equivalent behaviour.
-  int cmpBasicBlocks(const BasicBlock *BBL, const BasicBlock *BBR) const;
+  virtual int cmpBasicBlocks(const BasicBlock *BBL, const BasicBlock *BBR) const;
 
   /// Constants comparison.
   /// Its analog to lexicographical comparison between hypothetical numbers
@@ -203,11 +203,11 @@ protected:
   /// look at their particular properties (bit-width for vectors, and
   /// address space for pointers).
   /// If these properties are equal - compare their contents.
-  int cmpConstants(const Constant *L, const Constant *R) const;
+  virtual int cmpConstants(const Constant *L, const Constant *R) const;
 
   /// Compares two global values by number. Uses the GlobalNumbersState to
   /// identify the same gobals across function calls.
-  int cmpGlobalValues(GlobalValue *L, GlobalValue *R) const;
+  virtual int cmpGlobalValues(GlobalValue *L, GlobalValue *R) const;
 
   /// Assign or look up previously assigned numbers for the two values, and
   /// return whether the numbers are equal. Numbers are assigned in the order
@@ -227,7 +227,7 @@ protected:
   ///          then left value is greater.
   ///          In another words, we compare serial numbers, for more details
   ///          see comments for sn_mapL and sn_mapR.
-  int cmpValues(const Value *L, const Value *R) const;
+  virtual int cmpValues(const Value *L, const Value *R) const;
 
   /// Compare two Instructions for equivalence, similar to
   /// Instruction::isSameOperationAs.
@@ -258,8 +258,8 @@ protected:
   /// Sets \p needToCmpOperands to true if the operands of the instructions
   /// still must be compared afterwards. In this case it's already guaranteed
   /// that both instructions have the same number of operands.
-  int cmpOperations(const Instruction *L, const Instruction *R,
-                    bool &needToCmpOperands) const;
+  virtual int cmpOperations(const Instruction *L, const Instruction *R,
+                            bool &needToCmpOperands) const;
 
   /// cmpType - compares two types,
   /// defines total ordering among the types set.
@@ -301,22 +301,23 @@ protected:
   /// be checked with the same way. If we get Res != 0 on some stage, return it.
   /// Otherwise return 0.
   /// 6. For all other cases put llvm_unreachable.
-  int cmpTypes(Type *TyL, Type *TyR) const;
+  virtual int cmpTypes(Type *TyL, Type *TyR) const;
 
-  int cmpNumbers(uint64_t L, uint64_t R) const;
-  int cmpAPInts(const APInt &L, const APInt &R) const;
-  int cmpAPFloats(const APFloat &L, const APFloat &R) const;
-  int cmpMem(StringRef L, StringRef R) const;
+  virtual int cmpNumbers(uint64_t L, uint64_t R) const;
+  virtual int cmpAPInts(const APInt &L, const APInt &R) const;
+  virtual int cmpAPFloats(const APFloat &L, const APFloat &R) const;
+  virtual int cmpMem(StringRef L, StringRef R) const;
 
   // The two functions undergoing comparison.
   const Function *FnL, *FnR;
 
 private:
-  int cmpOrderings(AtomicOrdering L, AtomicOrdering R) const;
-  int cmpInlineAsm(const InlineAsm *L, const InlineAsm *R) const;
-  int cmpAttrs(const AttributeList L, const AttributeList R) const;
-  int cmpRangeMetadata(const MDNode *L, const MDNode *R) const;
-  int cmpOperandBundlesSchema(const Instruction *L, const Instruction *R) const;
+  virtual int cmpOrderings(AtomicOrdering L, AtomicOrdering R) const;
+  virtual int cmpInlineAsm(const InlineAsm *L, const InlineAsm *R) const;
+  virtual int cmpAttrs(const AttributeList L, const AttributeList R) const;
+  virtual int cmpRangeMetadata(const MDNode *L, const MDNode *R) const;
+  virtual int cmpOperandBundlesSchema(const Instruction *L,
+                                      const Instruction *R) const;
 
   /// Compare two GEPs for equivalent pointer arithmetic.
   /// Parts to be compared for each comparison stage,
@@ -326,7 +327,7 @@ private:
   /// 3. Pointer operand type (using cmpType method).
   /// 4. Number of operands.
   /// 5. Compare operands, using cmpValues method.
-  int cmpGEPs(const GEPOperator *GEPL, const GEPOperator *GEPR) const;
+  virtual int cmpGEPs(const GEPOperator *GEPL, const GEPOperator *GEPR) const;
   int cmpGEPs(const GetElementPtrInst *GEPL,
               const GetElementPtrInst *GEPR) const {
     return cmpGEPs(cast<GEPOperator>(GEPL), cast<GEPOperator>(GEPR));
