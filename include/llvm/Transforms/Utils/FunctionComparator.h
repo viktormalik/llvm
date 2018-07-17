@@ -311,7 +311,6 @@ protected:
   // The two functions undergoing comparison.
   const Function *FnL, *FnR;
 
-private:
   virtual int cmpOrderings(AtomicOrdering L, AtomicOrdering R) const;
   virtual int cmpInlineAsm(const InlineAsm *L, const InlineAsm *R) const;
   virtual int cmpAttrs(const AttributeList L, const AttributeList R) const;
@@ -333,6 +332,7 @@ private:
     return cmpGEPs(cast<GEPOperator>(GEPL), cast<GEPOperator>(GEPR));
   }
 
+private:
   /// Assign serial numbers to values from left function, and values from
   /// right function.
   /// Explanation:
