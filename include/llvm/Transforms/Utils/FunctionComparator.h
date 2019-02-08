@@ -332,7 +332,6 @@ protected:
     return cmpGEPs(cast<GEPOperator>(GEPL), cast<GEPOperator>(GEPR));
   }
 
-private:
   /// Assign serial numbers to values from left function, and values from
   /// right function.
   /// Explanation:
@@ -368,6 +367,7 @@ private:
   /// So it's impossible to use dominance properties in general.
   mutable DenseMap<const Value*, int> sn_mapL, sn_mapR;
 
+private:
   // The global state we will use
   GlobalNumberState* GlobalNumbers;
 };
