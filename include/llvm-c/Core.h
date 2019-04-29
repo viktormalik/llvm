@@ -2359,6 +2359,11 @@ LLVMValueRef LLVMAliasGetAliasee(LLVMValueRef Alias);
 void LLVMAliasSetAliasee(LLVMValueRef Alias, LLVMValueRef Aliasee);
 
 /**
+ * Delete alias from its module.
+ */
+void LLVMDeleteGlobalAlias(LLVMValueRef Alias);
+
+/**
  * @}
  */
 

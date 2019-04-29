@@ -2225,6 +2225,10 @@ void LLVMAliasSetAliasee(LLVMValueRef Alias, LLVMValueRef Aliasee) {
   unwrap<GlobalAlias>(Alias)->setAliasee(unwrap<Constant>(Aliasee));
 }
 
+void LLVMDeleteGlobalAlias(LLVMValueRef Alias) {
+    unwrap<GlobalAlias>(Alias)->eraseFromParent();
+}
+
 /*--.. Operations on functions .............................................--*/
 
 LLVMValueRef LLVMAddFunction(LLVMModuleRef M, const char *Name,
